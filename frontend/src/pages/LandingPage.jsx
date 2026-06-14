@@ -1,259 +1,477 @@
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
+import { motion } from 'framer-motion';
 import {
   HiOutlineAcademicCap, HiOutlineShieldCheck, HiOutlineChartBar,
   HiOutlineDocumentText, HiOutlineUserGroup, HiOutlineBookOpen,
   HiOutlineClipboardDocumentCheck, HiOutlineCog6Tooth, HiOutlineArrowRight,
-  HiOutlineBuildingLibrary, HiOutlineSparkles, HiOutlineBell,
-  HiOutlineSun, HiOutlineMoon
+  HiOutlineBuildingLibrary, HiOutlineSparkles, HiOutlineBolt,
+  HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineStar,
 } from 'react-icons/hi2';
 
+/* ── helpers ── */
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } })
+  hidden: { opacity: 0, y: 24 },
+  visible: (i = 0) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.08, duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
 };
 
+const brands = ['UNILAG', 'COVENANT', 'OAU', 'LASU', 'FUTA', 'UNIBEN', 'ABU', 'UI', 'UNN', 'FUOYE', 'EKSU', 'FUTA'];
+
 const features = [
-  { icon: HiOutlineShieldCheck, title: 'Accurate Grading', desc: 'Auto-computed grades with institution-specific grading scales. No more manual errors.', color: '#059669' },
-  { icon: HiOutlineUserGroup, title: 'Multi-Role Access', desc: 'Dedicated dashboards for institutions, teachers, and students with role-based permissions.', color: '#1e40af' },
-  { icon: HiOutlineChartBar, title: 'Real-Time Analytics', desc: 'Live performance analytics, grade distributions, and GPA tracking at a glance.', color: '#7c3aed' },
-  { icon: HiOutlineDocumentText, title: 'Transcript Generation', desc: 'Generate official transcripts and broadsheets instantly with full academic history.', color: '#dc2626' },
-  { icon: HiOutlineClipboardDocumentCheck, title: 'Result Approval Flow', desc: 'Teachers submit, institutions approve. Complete audit trail for every grade change.', color: '#ea580c' },
-  { icon: HiOutlineBookOpen, title: 'Course Management', desc: 'Create departments, courses, and sessions. Assign teachers and manage enrollments.', color: '#0891b2' },
+  { icon: HiOutlineShieldCheck, title: 'Accurate Grading', desc: 'Auto-computed grades with institution-specific scales. Zero manual errors.' },
+  { icon: HiOutlineUserGroup, title: 'Multi-Role Access', desc: 'Dedicated dashboards for institutions, teachers, and students.' },
+  { icon: HiOutlineChartBar, title: 'Real-Time Analytics', desc: 'Live performance analytics and GPA tracking at a glance.' },
+  { icon: HiOutlineDocumentText, title: 'Transcript Generation', desc: 'Official transcripts and broadsheets in one click.' },
+  { icon: HiOutlineClipboardDocumentCheck, title: 'Approval Workflow', desc: 'Teachers submit — institutions approve. Full audit trail included.' },
+  { icon: HiOutlineBookOpen, title: 'Course Management', desc: 'Departments, courses, sessions, teachers and enrollments — all organized.' },
 ];
 
 const steps = [
-  { num: '01', title: 'Register Your Institution', desc: 'Sign up your university or college. An admin will approve your account.', icon: HiOutlineBuildingLibrary },
-  { num: '02', title: 'Set Up Courses & People', desc: 'Create departments, add courses, register teachers and students. Credentials sent automatically.', icon: HiOutlineCog6Tooth },
-  { num: '03', title: 'Publish Results', desc: 'Teachers enter grades, submit for approval. Students see results instantly once approved.', icon: HiOutlineSparkles },
+  { num: '01', title: 'Register Your Institution', desc: 'Sign up your university or college. An admin approves your account within 24 hours.', border: '#b7c6c2' },
+  { num: '02', title: 'Set Up Courses & People', desc: 'Create departments, add courses, register teachers and students. Credentials sent automatically.', border: '#ffe17c' },
+  { num: '03', title: 'Publish Results', desc: 'Teachers enter grades, submit for approval. Students see results instantly once approved.', border: '#ffffff' },
 ];
 
-const roles = [
-  { role: 'Institution', desc: 'Manage your entire academic structure — departments, courses, teachers, students, grading scales. Approve results before publication.', icon: HiOutlineBuildingLibrary, gradient: 'linear-gradient(135deg, #1e40af, #3b82f6)' },
-  { role: 'Teacher', desc: 'View assigned courses, enter student grades in a spreadsheet-style interface, and submit results for institutional approval.', icon: HiOutlineBookOpen, gradient: 'linear-gradient(135deg, #059669, #10b981)' },
-  { role: 'Student', desc: 'Register for courses, view semester results with GPA, access your full transcript, and track academic progress.', icon: HiOutlineAcademicCap, gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)' },
-  { role: 'Admin', desc: 'Oversee all institutions on the platform. Approve registrations, monitor activity, and manage the entire system.', icon: HiOutlineShieldCheck, gradient: 'linear-gradient(135deg, #dc2626, #f87171)' },
+const personas = [
+  {
+    role: 'Institution Admin', bg: '#b7c6c2', textColor: '#000',
+    icon: HiOutlineBuildingLibrary,
+    desc: 'Manage your entire academic structure — departments, courses, teachers, students, grading scales, and result approval.',
+  },
+  {
+    role: 'Teacher', bg: '#ffe17c', textColor: '#000', shadow: true,
+    icon: HiOutlineBookOpen,
+    desc: 'View assigned courses, enter student grades in a spreadsheet-style interface, and submit for institutional approval.',
+  },
+  {
+    role: 'Student', bg: '#272727', textColor: '#fff',
+    icon: HiOutlineAcademicCap,
+    desc: 'Register for courses, view semester results with GPA, access your full transcript, and track academic progress.',
+  },
 ];
+
+const testimonials = [
+  { name: 'Dr. Adewale Bello', role: 'Registrar, UNILAG', text: 'Result management went from 3 weeks to 3 days. Our students get their results faster and with zero errors.' },
+  { name: 'Prof. Grace Okafor', role: 'HOD Computer Science, OAU', text: 'The grade entry interface is incredibly intuitive. My staff adopted it without any training at all.' },
+  { name: 'Miracle Johnson', role: 'Student, Covenant University', text: 'I can check my results, GPA and full transcript from my phone. This is exactly what we needed.' },
+];
+
+/* ── Push Button ── */
+const PushBtn = ({ children, onClick, variant = 'black', size = 'md', className = '' }) => {
+  const variants = {
+    black: { bg: '#000', color: '#fff', border: '#000', shadow: '#000' },
+    yellow: { bg: '#ffe17c', color: '#000', border: '#000', shadow: '#000' },
+    white: { bg: '#fff', color: '#000', border: '#000', shadow: '#000' },
+    sage: { bg: '#b7c6c2', color: '#000', border: '#000', shadow: '#000' },
+  };
+  const v = variants[variant] || variants.black;
+  const pad = size === 'lg' ? '1rem 2.25rem' : size === 'sm' ? '0.5rem 1rem' : '0.875rem 1.75rem';
+  const fs = size === 'lg' ? '1.0625rem' : size === 'sm' ? '0.8125rem' : '0.9375rem';
+  const sh = size === 'lg' ? '8px 8px 0px 0px' : '4px 4px 0px 0px';
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ x: 4, y: 4, boxShadow: `2px 2px 0px 0px ${v.shadow}` }}
+      whileTap={{ x: 8, y: 8, boxShadow: `0px 0px 0px 0px ${v.shadow}` }}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+        padding: pad, background: v.bg, color: v.color,
+        border: `2px solid ${v.border}`, borderRadius: '0.75rem',
+        fontFamily: "'Satoshi', sans-serif", fontSize: fs, fontWeight: 700,
+        cursor: 'pointer', textDecoration: 'none', whiteSpace: 'nowrap',
+        boxShadow: `${sh} ${v.shadow}`,
+        transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+      }}
+      className={className}
+    >
+      {children}
+    </motion.button>
+  );
+};
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { theme, toggleTheme } = useTheme();
 
   if (isAuthenticated) {
     navigate('/dashboard', { replace: true });
     return null;
   }
 
-  const isDark = theme === 'dark';
-
   return (
-    <div style={{ minHeight: '100vh', background: isDark ? '#0a0f1e' : '#f8fafc', color: isDark ? '#e2e8f0' : '#1e293b', overflowX: 'hidden' }}>
-      {/* NAV */}
+    <div style={{ fontFamily: "'Satoshi', sans-serif", overflowX: 'hidden', background: '#171e19' }}>
+
+      {/* ══════════════ NAVIGATION ══════════════ */}
       <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: isDark ? 'rgba(10,15,30,0.85)' : 'rgba(248,250,252,0.85)',
-        backdropFilter: 'blur(20px)', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: 80,
+        background: '#ffe17c', borderBottom: '2px solid #000',
+        display: 'flex', alignItems: 'center',
       }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #1e40af, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <HiOutlineAcademicCap style={{ color: 'white', fontSize: '1.25rem' }} />
+            <div style={{ width: 40, height: 40, background: '#000', border: '2px solid #000', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <HiOutlineBolt style={{ color: '#ffe17c', fontSize: '1.25rem' }} />
             </div>
-            <span style={{ fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.025em' }}>ResultManager</span>
+            <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.03em', color: '#000' }}>ResultManager</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', color: isDark ? '#94a3b8' : '#64748b', display: 'flex', padding: 8, borderRadius: 8 }} aria-label="Toggle theme">
-              {isDark ? <HiOutlineSun size={20} /> : <HiOutlineMoon size={20} />}
-            </button>
-            <button onClick={() => navigate('/login')} style={{
-              background: 'none', border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`,
-              color: isDark ? '#e2e8f0' : '#1e293b', padding: '0.5rem 1.25rem', borderRadius: 8,
-              fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s'
-            }}>Sign In</button>
-            <button onClick={() => navigate('/register')} style={{
-              background: 'linear-gradient(135deg, #1e40af, #059669)', color: 'white', border: 'none',
-              padding: '0.5rem 1.25rem', borderRadius: 8, fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer'
-            }}>Register</button>
+
+          {/* Center links */}
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            {['Features', 'How it Works', 'Roles', 'Pricing'].map((l) => (
+              <a key={l} href={`#${l.toLowerCase().replace(/ /g, '-')}`}
+                style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 700, fontSize: '0.9375rem', color: '#000', textDecoration: 'none' }}>
+                {l}
+              </a>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <PushBtn variant="white" size="sm" onClick={() => navigate('/login')}>Sign In</PushBtn>
+            <PushBtn variant="black" size="sm" onClick={() => navigate('/register')}>Start Free Trial</PushBtn>
           </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section style={{ paddingTop: 160, paddingBottom: 100, position: 'relative', overflow: 'hidden' }}>
-        {/* Background decorations */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: '10%', left: '10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(30,64,175,0.08) 0%, transparent 70%)' }} />
-          <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%)' }} />
-        </div>
+      {/* ══════════════ HERO ══════════════ */}
+      <section style={{
+        paddingTop: 120, paddingBottom: 80, background: '#ffe17c',
+        borderBottom: '2px solid #000', position: 'relative', overflow: 'hidden',
+        backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
+      }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          {/* Left */}
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem',
-              borderRadius: 50, background: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.08)',
-              border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : 'rgba(59,130,246,0.15)'}`,
-              fontSize: '0.8125rem', color: '#3b82f6', fontWeight: 600, marginBottom: '1.5rem'
+            {/* Badge */}
+            <motion.div custom={0} variants={fadeUp} style={{ marginBottom: '1.5rem' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.375rem 1rem', background: '#fff',
+                border: '2px solid #000', borderRadius: 9999,
+                fontFamily: "'Satoshi', sans-serif", fontSize: '0.8125rem', fontWeight: 700,
+              }}>
+                <HiOutlineSparkles /> NEW: AI Grade Assistant 2.0
+              </span>
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1 custom={1} variants={fadeUp} style={{
+              fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800,
+              fontSize: 'clamp(2.75rem, 5.5vw, 4.5rem)', lineHeight: 1.05,
+              letterSpacing: '-0.04em', color: '#000', marginBottom: '1.5rem',
             }}>
-              <HiOutlineSparkles /> Academic Results Platform
-            </div>
+              Academic Results,{' '}
+              <span style={{
+                WebkitTextStroke: '2px #000',
+                WebkitTextFillColor: 'transparent',
+              }}>
+                Simplified
+              </span>
+            </motion.h1>
+
+            <motion.p custom={2} variants={fadeUp} style={{
+              fontFamily: "'Satoshi', sans-serif", fontWeight: 500, fontSize: '1.125rem',
+              color: '#1a1a1a', lineHeight: 1.7, marginBottom: '2rem', maxWidth: 480,
+            }}>
+              A comprehensive platform for managing student results with precision. From grade entry to transcript generation — every step automated and audited.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div custom={3} variants={fadeUp} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <PushBtn variant="black" size="lg" onClick={() => navigate('/register')}>
+                Register Institution <HiOutlineArrowRight />
+              </PushBtn>
+              <PushBtn variant="white" size="lg" onClick={() => navigate('/login')}>
+                Sign In →
+              </PushBtn>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div custom={4} variants={fadeUp} style={{ display: 'flex', gap: '2rem', marginTop: '2.5rem', flexWrap: 'wrap' }}>
+              {[
+                { val: '99.9%', lbl: 'Grade Accuracy' },
+                { val: '10x', lbl: 'Faster Processing' },
+                { val: '100%', lbl: 'Data Security' },
+              ].map((s) => (
+                <div key={s.lbl} style={{ textAlign: 'left' }}>
+                  <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '2rem', fontWeight: 800, color: '#000' }}>{s.val}</div>
+                  <div style={{ fontFamily: "'Satoshi', sans-serif", fontSize: '0.8125rem', fontWeight: 500, color: '#444' }}>{s.lbl}</div>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
 
-          <motion.h1 initial="hidden" animate="visible" custom={1} variants={fadeUp} style={{
-            fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 900, lineHeight: 1.1,
-            letterSpacing: '-0.03em', marginBottom: '1.5rem', maxWidth: 800, margin: '0 auto 1.5rem'
-          }}>
-            Academic Results,{' '}
-            <span style={{ background: 'linear-gradient(135deg, #1e40af, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Simplified
-            </span>
-          </motion.h1>
-
-          <motion.p initial="hidden" animate="visible" custom={2} variants={fadeUp} style={{
-            fontSize: '1.125rem', color: isDark ? '#94a3b8' : '#64748b', maxWidth: 640,
-            margin: '0 auto 2.5rem', lineHeight: 1.7
-          }}>
-            A comprehensive platform for managing student results with precision. From grade entry to transcript generation — every step automated, audited, and accurate.
-          </motion.p>
-
-          <motion.div initial="hidden" animate="visible" custom={3} variants={fadeUp} style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button onClick={() => navigate('/register')} style={{
-              background: 'linear-gradient(135deg, #1e40af, #059669)', color: 'white', border: 'none',
-              padding: '0.875rem 2rem', borderRadius: 12, fontSize: '1rem', fontWeight: 700,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
-              boxShadow: '0 8px 32px -8px rgba(30,64,175,0.4)', transition: 'transform 0.2s'
-            }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-              Register Your Institution <HiOutlineArrowRight />
-            </button>
-            <button onClick={() => navigate('/login')} style={{
-              background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-              color: isDark ? '#e2e8f0' : '#1e293b',
-              border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-              padding: '0.875rem 2rem', borderRadius: 12, fontSize: '1rem', fontWeight: 600, cursor: 'pointer'
-            }}>Sign In →</button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div initial="hidden" animate="visible" custom={5} variants={fadeUp} style={{
-            display: 'flex', justifyContent: 'center', gap: '3rem', marginTop: '4rem', flexWrap: 'wrap'
-          }}>
-            {[{ label: 'Grade Accuracy', value: '99.9%' }, { label: 'Faster Processing', value: '10x' }, { label: 'Data Security', value: '100%' }].map((stat, i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', fontWeight: 900, background: 'linear-gradient(135deg, #1e40af, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{stat.value}</div>
-                <div style={{ fontSize: '0.875rem', color: isDark ? '#64748b' : '#94a3b8', fontWeight: 500, marginTop: 4 }}>{stat.label}</div>
+          {/* Right — Browser Mockup */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            style={{
+              background: '#fff', border: '2px solid #000',
+              borderRadius: '1rem', boxShadow: '12px 12px 0px #000',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Browser bar */}
+            <div style={{ background: '#000', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840' }} />
+              <div style={{ flex: 1, background: '#1a1a1a', borderRadius: 4, height: 24, marginLeft: 8, display: 'flex', alignItems: 'center', paddingLeft: 8 }}>
+                <span style={{ color: '#9ca3af', fontSize: '0.75rem', fontFamily: 'monospace' }}>resultmanager.app/dashboard</span>
               </div>
-            ))}
+            </div>
+            {/* Dashboard content */}
+            <div style={{ padding: '1.25rem', background: '#f9f9f9' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                {[
+                  { lbl: 'Total Students', val: '3,842', bg: '#ffe17c' },
+                  { lbl: 'Active Teachers', val: '284', bg: '#b7c6c2' },
+                  { lbl: 'Results Processed', val: '12,490', bg: '#fff' },
+                  { lbl: 'Avg GPA', val: '3.45', bg: '#171e19', color: '#fff' },
+                ].map((c) => (
+                  <div key={c.lbl} style={{ background: c.bg, border: '2px solid #000', borderRadius: '0.5rem', padding: '0.75rem', boxShadow: '3px 3px 0px #000' }}>
+                    <div style={{ fontSize: '0.625rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: c.color || '#555', fontFamily: "'Cabinet Grotesk', sans-serif" }}>{c.lbl}</div>
+                    <div style={{ fontSize: '1.375rem', fontWeight: 800, color: c.color || '#000', fontFamily: "'Cabinet Grotesk', sans-serif", marginTop: 2 }}>{c.val}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Chart bar mockup */}
+              <div style={{ background: '#fff', border: '2px solid #000', borderRadius: '0.5rem', padding: '0.875rem', boxShadow: '3px 3px 0px #000' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 800, color: '#000', marginBottom: '0.625rem', fontFamily: "'Cabinet Grotesk', sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>Registrations by Month</div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.375rem', height: 60 }}>
+                  {[40, 65, 80, 55, 90, 72, 95, 60, 85, 70, 88, 100].map((h, i) => (
+                    <div key={i} style={{ flex: 1, background: i % 3 === 0 ? '#ffe17c' : i % 3 === 1 ? '#b7c6c2' : '#171e19', border: '1px solid #000', borderRadius: '2px 2px 0 0', height: `${h}%` }} />
+                  ))}
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section style={{ padding: '80px 0', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}>
+      {/* ══════════════ SOCIAL PROOF MARQUEE ══════════════ */}
+      <div style={{ background: '#171e19', borderBottom: '2px solid #000', padding: '1.25rem 0', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', width: 'max-content' }}>
+          <motion.div
+            animate={{ x: [0, -1200] }}
+            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+            style={{ display: 'flex', gap: '3rem', alignItems: 'center', whiteSpace: 'nowrap' }}
+          >
+            {[...brands, ...brands].map((b, i) => (
+              <span key={i} style={{
+                fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800,
+                fontSize: '1.0625rem', color: '#b7c6c2', opacity: 0.5,
+                letterSpacing: '0.1em',
+              }}>{b}</span>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ══════════════ PROBLEM vs SOLUTION ══════════════ */}
+      <section id="features" style={{ background: '#fff', padding: '80px 0', borderBottom: '2px solid #000' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.025em', marginBottom: '0.75rem' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, letterSpacing: '-0.03em', color: '#000', marginBottom: '0.75rem' }}>
+              The Old Way vs. The Right Way
+            </h2>
+          </motion.div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            {/* Problem */}
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}
+              style={{ background: '#f4f4f5', border: '2px dashed #9ca3af', borderRadius: '1.5rem', padding: '2rem', opacity: 0.75 }}>
+              <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: '1.25rem', marginBottom: '1.25rem', color: '#555' }}>
+                😩 Without ResultManager
+              </div>
+              {[
+                'Manual spreadsheet errors cause grade disputes',
+                'Weeks of delays before results are published',
+                'No audit trail for grade changes',
+                'Students chase staff for transcripts',
+                'Lost result sheets and missing records',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                  <HiOutlineXCircle style={{ color: '#dc2626', flexShrink: 0, marginTop: 2, fontSize: '1.125rem' }} />
+                  <span style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#555', fontSize: '0.9375rem' }}>{item}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Solution */}
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} variants={fadeUp}
+              style={{ background: '#ffe17c', border: '2px solid #000', borderRadius: '1.5rem', padding: '2rem', boxShadow: '8px 8px 0px #000' }}>
+              <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: '1.25rem', marginBottom: '1.25rem', color: '#000' }}>
+                ✅ With ResultManager
+              </div>
+              {[
+                'Auto-computed grades with zero manual errors',
+                'Results published same day as approval',
+                'Complete audit trail for every grade change',
+                'Students access transcripts instantly online',
+                'All records encrypted and backed up in the cloud',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                  <HiOutlineCheckCircle style={{ color: '#059669', flexShrink: 0, marginTop: 2, fontSize: '1.125rem' }} />
+                  <span style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#000', fontSize: '0.9375rem' }}>{item}</span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ FEATURES GRID ══════════════ */}
+      <section style={{
+        background: '#ffe17c', borderBottom: '2px solid #000', borderTop: '2px solid #000', padding: '80px 0',
+        backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
+      }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, letterSpacing: '-0.03em', color: '#000', marginBottom: '0.75rem' }}>
               Everything You Need to Manage Results
             </h2>
-            <p style={{ color: isDark ? '#94a3b8' : '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
+            <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#333', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
               Built for educational institutions of all sizes. From a single department to a multi-faculty university.
             </p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {features.map((f, i) => (
               <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
-                style={{
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-                  borderRadius: 16, padding: '2rem', transition: 'all 0.3s',
-                  cursor: 'default'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 20px 40px -12px ${f.color}15`; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                style={{ background: '#fff', border: '2px solid #000', borderRadius: '0.75rem', padding: '1.75rem', boxShadow: '4px 4px 0px #000', transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)', cursor: 'default' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translate(2px,2px)'; e.currentTarget.style.boxShadow = '2px 2px 0px #000'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translate(0,0)'; e.currentTarget.style.boxShadow = '4px 4px 0px #000'; }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${f.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                  <f.icon style={{ fontSize: '1.375rem', color: f.color }} />
+                <div style={{ width: 52, height: 52, background: '#b7c6c2', border: '2px solid #000', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', transition: 'background 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#ffe17c'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#b7c6c2'; }}
+                >
+                  <f.icon style={{ fontSize: '1.5rem', color: '#000' }} />
                 </div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.5rem' }}>{f.title}</h3>
-                <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+                <h3 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '1.125rem', fontWeight: 800, color: '#000', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{f.title}</h3>
+                <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#444', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section style={{ padding: '80px 0' }}>
+      {/* ══════════════ HOW IT WORKS ══════════════ */}
+      <section id="how-it-works" style={{ background: '#171e19', padding: '80px 0', borderBottom: '2px solid #000' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.025em', marginBottom: '0.75rem' }}>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, letterSpacing: '-0.03em', color: '#fff', marginBottom: '0.75rem' }}>
               Get Started in 3 Simple Steps
             </h2>
-            <p style={{ color: isDark ? '#94a3b8' : '#64748b', maxWidth: 500, margin: '0 auto' }}>
+            <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#b7c6c2', maxWidth: 480, margin: '0 auto' }}>
               From registration to result publication in minutes, not weeks.
             </p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', position: 'relative' }}>
+            {/* Connector line */}
+            <div style={{ position: 'absolute', top: 48, left: '16.5%', right: '16.5%', height: 2, background: '#272727', zIndex: 0 }} />
+
             {steps.map((step, i) => (
               <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
-                style={{
-                  textAlign: 'center', padding: '2.5rem 2rem',
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-                  borderRadius: 16, position: 'relative'
-                }}>
-                <div style={{ fontSize: '3rem', fontWeight: 900, background: 'linear-gradient(135deg, #1e40af, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem', lineHeight: 1 }}>
-                  {step.num}
-                </div>
+                style={{ textAlign: 'center', padding: '2.5rem 2rem', background: '#1e2820', border: '2px solid #444', borderRadius: '1rem', position: 'relative', zIndex: 1 }}>
+                {/* Step circle */}
                 <div style={{
-                  width: 56, height: 56, borderRadius: 16, margin: '0 auto 1.25rem',
-                  background: 'linear-gradient(135deg, rgba(30,64,175,0.1), rgba(5,150,105,0.1))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  width: 72, height: 72, borderRadius: '50%', margin: '0 auto 1.5rem',
+                  background: '#171e19', border: `4px solid ${step.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <step.icon style={{ fontSize: '1.5rem', color: '#3b82f6' }} />
+                  <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '1.25rem', fontWeight: 800, color: step.border }}>{step.num}</span>
                 </div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.5rem' }}>{step.title}</h3>
-                <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+                <h3 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '1.125rem', fontWeight: 800, color: '#fff', marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>{step.title}</h3>
+                <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#b7c6c2', fontSize: '0.9375rem', lineHeight: 1.65, margin: 0 }}>{step.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ROLES */}
-      <section style={{ padding: '80px 0', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }}>
+      {/* ══════════════ PERSONA BENTO ══════════════ */}
+      <section id="roles" style={{ background: '#fff', padding: '80px 0', borderBottom: '2px solid #000' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.025em', marginBottom: '0.75rem' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, letterSpacing: '-0.03em', color: '#000', marginBottom: '0.75rem' }}>
               Built for Every Role
             </h2>
-            <p style={{ color: isDark ? '#94a3b8' : '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
-              Each user sees exactly what they need — no more, no less. Powered by role-based access control.
+            <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#555', maxWidth: 480, margin: '0 auto' }}>
+              Each user sees exactly what they need. Powered by role-based access control.
             </p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
-            {roles.map((r, i) => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+            {personas.map((p, i) => (
               <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
                 style={{
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'white',
-                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-                  borderRadius: 16, overflow: 'hidden', transition: 'transform 0.3s'
+                  background: p.bg, border: '2px solid #000', borderRadius: '1rem', padding: '2rem',
+                  boxShadow: p.shadow ? '8px 8px 0px #000' : '4px 4px 0px #000',
+                  transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translate(2px,2px)'; e.currentTarget.style.boxShadow = p.shadow ? '4px 4px 0px #000' : '2px 2px 0px #000'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translate(0,0)'; e.currentTarget.style.boxShadow = p.shadow ? '8px 8px 0px #000' : '4px 4px 0px #000'; }}
               >
-                <div style={{ background: r.gradient, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <r.icon style={{ color: 'white', fontSize: '1.25rem' }} />
-                  </div>
-                  <h3 style={{ color: 'white', fontWeight: 700, fontSize: '1.0625rem', margin: 0 }}>{r.role}</h3>
+                {/* Pill badge */}
+                <div style={{ display: 'inline-flex', padding: '0.25rem 0.875rem', background: '#fff', border: '2px solid #000', borderRadius: 9999, marginBottom: '1.25rem' }}>
+                  <span style={{ fontFamily: "'Satoshi', sans-serif", fontSize: '0.75rem', fontWeight: 700, color: '#000' }}>{p.role}</span>
                 </div>
-                <div style={{ padding: '1.5rem' }}>
-                  <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>{r.desc}</p>
+                <div style={{ width: 52, height: 52, background: p.textColor === '#fff' ? '#272727' : '#fff', border: '2px solid #000', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <p.icon style={{ fontSize: '1.5rem', color: p.textColor === '#fff' ? '#ffe17c' : '#000' }} />
+                </div>
+                <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: p.textColor, fontSize: '0.9375rem', lineHeight: 1.65, margin: 0 }}>{p.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ TESTIMONIALS ══════════════ */}
+      <section style={{ background: '#b7c6c2', padding: '80px 0', borderBottom: '2px solid #000' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 800, letterSpacing: '-0.03em', color: '#000', marginBottom: '0.75rem' }}>
+              Trusted Across Institutions
+            </h2>
+          </motion.div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+            {testimonials.map((t, i) => (
+              <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
+                style={{
+                  background: '#fff', border: '2px solid #000',
+                  /* asymmetric corners */
+                  borderRadius: '4px 24px 4px 24px',
+                  padding: '2rem', boxShadow: '4px 4px 0px #000',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translate(2px,2px)'; e.currentTarget.style.boxShadow = '2px 2px 0px #000'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translate(0,0)'; e.currentTarget.style.boxShadow = '4px 4px 0px #000'; }}
+              >
+                {/* Stars */}
+                <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
+                  {[...Array(5)].map((_, s) => (
+                    <HiOutlineStar key={s} style={{ color: '#ffbc2e', fontSize: '1rem', fill: '#ffbc2e' }} />
+                  ))}
+                </div>
+                <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#1a1a1a', fontSize: '0.9375rem', lineHeight: 1.65, marginBottom: '1.25rem' }}>
+                  &ldquo;{t.text}&rdquo;
+                </p>
+                <div>
+                  <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, color: '#000', fontSize: '0.9375rem' }}>{t.name}</div>
+                  <div style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#555', fontSize: '0.8125rem' }}>{t.role}</div>
                 </div>
               </motion.div>
             ))}
@@ -261,50 +479,89 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding: '80px 0' }}>
+      {/* ══════════════ FINAL CTA ══════════════ */}
+      <section style={{
+        background: '#ffe17c', padding: '100px 0', borderBottom: '2px solid #000',
+        backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
+      }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-            <div style={{
-              background: 'linear-gradient(135deg, #1e40af, #059669)', borderRadius: 24,
-              padding: '3.5rem 2.5rem', position: 'relative', overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-              <div style={{ position: 'absolute', bottom: -30, left: -30, width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-              <h2 style={{ color: 'white', fontSize: '1.875rem', fontWeight: 800, marginBottom: '1rem', position: 'relative', zIndex: 1 }}>
-                Ready to Transform Your Result Management?
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.0625rem', marginBottom: '2rem', position: 'relative', zIndex: 1, lineHeight: 1.6 }}>
-                Join institutions already using ResultManager for efficient, accurate, and transparent academic result processing.
-              </p>
-              <button onClick={() => navigate('/register')} style={{
-                background: 'white', color: '#1e40af', border: 'none',
-                padding: '0.875rem 2.5rem', borderRadius: 12, fontSize: '1rem',
-                fontWeight: 700, cursor: 'pointer', position: 'relative', zIndex: 1,
-                boxShadow: '0 8px 32px -8px rgba(0,0,0,0.3)'
-              }}>
-                Get Started Free <HiOutlineArrowRight style={{ marginLeft: 8, verticalAlign: 'middle' }} />
-              </button>
+            <h2 style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', fontWeight: 800, letterSpacing: '-0.04em', color: '#000', marginBottom: '1.25rem', lineHeight: 1.1 }}>
+              Ready to Transform Your<br />Result Management?
+            </h2>
+            <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, fontSize: '1.125rem', color: '#333', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+              Join institutions already using ResultManager for efficient, accurate, and transparent academic result processing.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <PushBtn variant="black" size="lg" onClick={() => navigate('/register')}>
+                Get Started Free <HiOutlineArrowRight />
+              </PushBtn>
+              <PushBtn variant="white" size="lg" onClick={() => navigate('/login')}>
+                Sign In to Dashboard
+              </PushBtn>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{
-        padding: '2.5rem 2rem', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-        textAlign: 'center'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #1e40af, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <HiOutlineAcademicCap style={{ color: 'white', fontSize: '1rem' }} />
+      {/* ══════════════ FOOTER ══════════════ */}
+      <footer style={{ background: '#171e19', padding: '4rem 2rem 2rem' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
+            {/* Brand */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div style={{ width: 40, height: 40, background: '#000', border: '2px solid #ffe17c', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <HiOutlineBolt style={{ color: '#ffe17c', fontSize: '1.25rem' }} />
+                </div>
+                <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: '1.125rem', color: '#fff' }}>ResultManager</span>
+              </div>
+              <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#b7c6c2', fontSize: '0.875rem', lineHeight: 1.65, maxWidth: 260 }}>
+                Comprehensive academic result management for universities and colleges across Africa.
+              </p>
+              <div style={{ display: 'flex', gap: '0.625rem', marginTop: '1.25rem' }}>
+                {['X', 'LI', 'FB', 'IG'].map((s) => (
+                  <div key={s} style={{ width: 36, height: 36, background: '#272727', border: '1px solid #444', borderRadius: '0.375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#ffe17c'; e.currentTarget.style.border = '1px solid #000'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#272727'; e.currentTarget.style.border = '1px solid #444'; }}>
+                    <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '0.6875rem', fontWeight: 800, color: '#fff', transition: 'color 0.15s' }}>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Links */}
+            {[
+              { head: 'Product', links: ['Features', 'Pricing', 'Changelog', 'Roadmap'] },
+              { head: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
+              { head: 'Support', links: ['Documentation', 'Help Center', 'Contact', 'Status'] },
+            ].map((col) => (
+              <div key={col.head}>
+                <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: '0.875rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>{col.head}</div>
+                {col.links.map((l) => (
+                  <a key={l} href="#" style={{ display: 'block', fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#b7c6c2', fontSize: '0.875rem', marginBottom: '0.5rem', textDecoration: 'none', transition: 'color 0.15s' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#ffe17c'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#b7c6c2'}
+                  >{l}</a>
+                ))}
+              </div>
+            ))}
           </div>
-          <span style={{ fontWeight: 700, fontSize: '0.9375rem' }}>ResultManager</span>
+
+          <div style={{ borderTop: '1px solid #272727', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 500, color: '#475569', fontSize: '0.8125rem' }}>
+              © {new Date().getFullYear()} Student Result Management System. All rights reserved.
+            </p>
+            <div style={{ display: 'flex', gap: '1.5rem' }}>
+              {['Privacy', 'Terms', 'Cookies'].map((l) => (
+                <a key={l} href="#" style={{ fontFamily: "'Satoshi', sans-serif", color: '#475569', fontSize: '0.8125rem', textDecoration: 'none' }}>{l}</a>
+              ))}
+            </div>
+          </div>
         </div>
-        <p style={{ color: isDark ? '#475569' : '#94a3b8', fontSize: '0.8125rem', margin: 0 }}>
-          © {new Date().getFullYear()} Student Result Management System. All rights reserved.
-        </p>
       </footer>
+
     </div>
   );
 };

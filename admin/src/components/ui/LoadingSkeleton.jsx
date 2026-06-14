@@ -1,12 +1,12 @@
 const LoadingSkeleton = ({ rows = 5, type = 'table' }) => {
   if (type === 'cards') {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="card" style={{ height: 120 }}>
-            <div className="skeleton" style={{ width: '40%', height: 14, marginBottom: 12 }} />
-            <div className="skeleton" style={{ width: '60%', height: 28, marginBottom: 8 }} />
-            <div className="skeleton" style={{ width: '80%', height: 12 }} />
+          <div key={i} style={{ background: '#fff', border: '2px solid #000', borderRadius: '0.75rem', padding: '1.5rem', boxShadow: '4px 4px 0px #000', height: 130 }}>
+            <div className="skeleton" style={{ width: '60%', height: 14, marginBottom: 16 }} />
+            <div className="skeleton" style={{ width: '45%', height: 36, marginBottom: 12 }} />
+            <div className="skeleton" style={{ width: '70%', height: 12 }} />
           </div>
         ))}
       </div>
@@ -14,18 +14,18 @@ const LoadingSkeleton = ({ rows = 5, type = 'table' }) => {
   }
 
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-      <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
-        <div className="skeleton" style={{ width: 200, height: 20 }} />
+    <div style={{ background: '#fff', border: '2px solid #000', borderRadius: '0.75rem', boxShadow: '4px 4px 0px #000', overflow: 'hidden' }}>
+      <div style={{ padding: '1rem 1.5rem', borderBottom: '2px solid #000', background: '#ffe17c' }}>
+        <div className="skeleton" style={{ width: 180, height: 20 }} />
       </div>
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} style={{ padding: '1rem 1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', borderBottom: '1px solid var(--border-light)' }}>
-          <div className="skeleton" style={{ width: 36, height: 36, borderRadius: '50%' }} />
+        <div key={i} style={{ padding: '1rem 1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+          <div className="skeleton" style={{ width: 38, height: 38, borderRadius: '50%', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
-            <div className="skeleton" style={{ width: '50%', height: 14, marginBottom: 6 }} />
-            <div className="skeleton" style={{ width: '30%', height: 12 }} />
+            <div className="skeleton" style={{ width: '50%', height: 14, marginBottom: 8 }} />
+            <div className="skeleton" style={{ width: '32%', height: 12 }} />
           </div>
-          <div className="skeleton" style={{ width: 80, height: 26, borderRadius: 20 }} />
+          <div className="skeleton" style={{ width: 72, height: 26, borderRadius: 9999 }} />
         </div>
       ))}
     </div>

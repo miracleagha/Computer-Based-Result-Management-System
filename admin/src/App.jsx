@@ -48,13 +48,17 @@ function App() {
             toastOptions={{
               duration: 3000,
               style: {
-                background: 'var(--bg-card)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-sm)',
+                background: '#fff',
+                color: '#000',
+                border: '2px solid #000',
+                borderRadius: '0.625rem',
+                fontFamily: "'Satoshi', sans-serif",
+                fontWeight: 700,
                 fontSize: '0.875rem',
-                boxShadow: 'var(--shadow-md)'
-              }
+                boxShadow: '4px 4px 0px #000',
+              },
+              success: { iconTheme: { primary: '#000', secondary: '#ffe17c' } },
+              error: { iconTheme: { primary: '#dc2626', secondary: '#fff' } },
             }}
           />
         </AuthProvider>
