@@ -1,101 +1,96 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { HiOutlineArrowTrendingUp, HiOutlineArrowTrendingDown } from 'react-icons/hi2';
 
-const StatCard = ({ title, value, icon: Icon, color = 'var(--primary)', trend, trendValue, delay = 0 }) => {
+/* Neo-Brutalist card backgrounds per variant */
+const bgMap = {
+  yellow:  '#ffe17c',
+  sage:    '#b7c6c2',
+  white:   '#ffffff',
+  dark:    '#171e19',
+  blue:    '#ffe17c',   // fallback → yellow
+  green:   '#b7c6c2',
+  amber:   '#ffffff',
+  purple:  '#ffe17c',
+  red:     '#ffffff',
+};
+
+const StatCard = ({ title, value, icon: Icon, color = 'yellow', trend, trendValue, delay = 0 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const hasAnimated = useRef(false);
 
   useEffect(() => {
     if (hasAnimated.current) return;
     hasAnimated.current = true;
-
     const numValue = parseInt(value) || 0;
     if (numValue === 0) { setDisplayValue(0); return; }
-
-    const duration = 1500;
     const steps = 60;
     const stepValue = numValue / steps;
-    let current = 0;
     let step = 0;
-
     const timer = setInterval(() => {
       step++;
-      current = Math.min(Math.round(stepValue * step), numValue);
-      setDisplayValue(current);
+      setDisplayValue(Math.min(Math.round(stepValue * step), numValue));
       if (step >= steps) clearInterval(timer);
-    }, duration / steps);
-
+    }, 1500 / steps);
     return () => clearInterval(timer);
   }, [value]);
 
-  const colorMap = {
-    blue: { bg: 'rgba(59,130,246,0.08)', icon: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
-    green: { bg: 'rgba(16,185,129,0.08)', icon: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
-    amber: { bg: 'rgba(245,158,11,0.08)', icon: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
-    red: { bg: 'rgba(239,68,68,0.08)', icon: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #dc2626)' },
-    purple: { bg: 'rgba(139,92,246,0.08)', icon: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }
-  };
-
-  const colors = colorMap[color] || colorMap.blue;
+  const bg       = bgMap[color] || '#ffe17c';
+  const isDark   = bg === '#171e19';
+  const textClr  = isDark ? '#fff' : '#000';
+  const mutedClr = isDark ? '#b7c6c2' : '#555';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: delay * 0.1 }}
-      className="card"
+      transition={{ duration: 0.45, delay: delay * 0.08 }}
+      whileHover={{ x: 2, y: 2, boxShadow: '2px 2px 0px #000' }}
       style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: '1rem',
-        cursor: 'default'
+        background: bg, border: '2px solid #000',
+        borderRadius: '0.75rem', padding: '1.5rem',
+        boxShadow: '4px 4px 0px #000',
+        transition: 'all 0.2s cubic-bezier(0.175,0.885,0.32,1.275)',
+        cursor: 'default',
       }}
     >
-      <div>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 500, marginBottom: '0.5rem' }}>
-          {title}
-        </p>
-        <motion.h3
-          key={displayValue}
-          style={{
-            fontSize: '1.75rem',
-            fontWeight: 800,
-            color: 'var(--text-primary)',
-            lineHeight: 1.1,
-            letterSpacing: '-0.025em'
-          }}
-        >
-          {displayValue.toLocaleString()}
-        </motion.h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        {/* Icon */}
+        <div style={{
+          width: 44, height: 44, background: isDark ? '#ffe17c' : '#000',
+          border: '2px solid #000', borderRadius: '0.5rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '2px 2px 0px #000',
+        }}>
+          <Icon style={{ fontSize: '1.25rem', color: isDark ? '#000' : (bg === '#ffe17c' ? '#000' : '#fff') }} />
+        </div>
+
+        {/* Trend pill */}
         {trend && (
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.25rem',
-            marginTop: '0.5rem',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            color: trend === 'up' ? '#10b981' : '#ef4444'
+            display: 'flex', alignItems: 'center', gap: '0.25rem',
+            background: '#fff', border: '2px solid #000', borderRadius: 9999,
+            padding: '0.2rem 0.625rem',
           }}>
-            <span>{trend === 'up' ? '↑' : '↓'}</span>
-            <span>{trendValue}</span>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>vs last month</span>
+            {trend === 'up'
+              ? <HiOutlineArrowTrendingUp style={{ fontSize: '0.75rem', color: '#059669' }} />
+              : <HiOutlineArrowTrendingDown style={{ fontSize: '0.75rem', color: '#dc2626' }} />
+            }
+            <span style={{ fontFamily: "'Cabinet Grotesk',sans-serif", fontSize: '0.75rem', fontWeight: 800, color: trend === 'up' ? '#059669' : '#dc2626' }}>
+              {trendValue}
+            </span>
           </div>
         )}
       </div>
 
-      <div style={{
-        width: 48,
-        height: 48,
-        borderRadius: 'var(--radius)',
-        background: colors.bg,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0
-      }}>
-        <Icon style={{ fontSize: '1.375rem', color: colors.icon }} />
+      {/* Value */}
+      <div style={{ fontFamily: "'Cabinet Grotesk',sans-serif", fontSize: '2rem', fontWeight: 800, color: textClr, lineHeight: 1, marginBottom: '0.375rem', letterSpacing: '-0.03em' }}>
+        {displayValue.toLocaleString()}
+      </div>
+
+      {/* Label */}
+      <div style={{ fontFamily: "'Satoshi',sans-serif", fontSize: '0.8125rem', fontWeight: 500, color: mutedClr }}>
+        {title}
       </div>
     </motion.div>
   );

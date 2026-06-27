@@ -148,7 +148,7 @@ const Students = () => {
                 <motion.tr key={s._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '0.75rem' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--yellow)', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '0.75rem', boxShadow: '1px 1px 0px #000' }}>
                         {s.userId?.firstName?.charAt(0)}{s.userId?.lastName?.charAt(0)}
                       </div>
                       <div>
@@ -192,13 +192,13 @@ const Students = () => {
       {showAddModal && (
         <div onClick={(e) => e.target === e.currentTarget && setShowAddModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', padding: '1rem' }}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', width: '100%', maxWidth: 500, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            style={{ background: '#fff', border: '2px solid #000', borderRadius: 'var(--radius)', width: '100%', maxWidth: 500, boxShadow: '8px 8px 0px #000', overflow: 'hidden' }}>
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>{editingId ? 'Edit Student' : 'Add New Student'}</h3>
               <button onClick={() => setShowAddModal(false)} className="btn btn-sm btn-outline" style={{ padding: '0.25rem 0.5rem' }}>✕</button>
             </div>
             <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label">First Name</label>
                   <input className="form-input" required value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
@@ -212,7 +212,7 @@ const Students = () => {
                 <label className="form-label">Email</label>
                 <input className="form-input" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label">Level</label>
                   <select className="form-input form-select" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })}>

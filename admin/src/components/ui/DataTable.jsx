@@ -13,31 +13,33 @@ const DataTable = ({
   loading = false,
   emptyMessage = 'No data found',
   rowKey = '_id',
-  onRowClick
+  onRowClick,
 }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
 
   const handleSort = (field) => {
     if (!onSort) return;
-    const newOrder = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
-    onSort(field, newOrder);
+    onSort(field, sortField === field && sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   const SortIcon = ({ field }) => {
-    if (sortField !== field) return <HiOutlineChevronUp size={12} style={{ opacity: 0.3 }} />;
+    if (sortField !== field) return <HiOutlineChevronUp size={11} style={{ opacity: 0.3 }} />;
     return sortOrder === 'asc'
-      ? <HiOutlineChevronUp size={12} style={{ color: 'var(--primary)' }} />
-      : <HiOutlineChevronDown size={12} style={{ color: 'var(--primary)' }} />;
+      ? <HiOutlineChevronUp size={11} style={{ color: '#000' }} />
+      : <HiOutlineChevronDown size={11} style={{ color: '#000' }} />;
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="card"
-      style={{ padding: 0, overflow: 'hidden' }}
+      style={{
+        background: '#fff', border: '2px solid #000',
+        borderRadius: '0.75rem', boxShadow: '4px 4px 0px #000',
+        overflow: 'hidden',
+      }}
     >
-      <div style={{ overflowX: 'auto' }}>
+      <div className="table-wrap">
         <table className="data-table">
           <thead>
             <tr>
@@ -45,11 +47,7 @@ const DataTable = ({
                 <th
                   key={col.key}
                   onClick={() => col.sortable && handleSort(col.key)}
-                  style={{
-                    cursor: col.sortable ? 'pointer' : 'default',
-                    userSelect: 'none',
-                    width: col.width
-                  }}
+                  style={{ cursor: col.sortable ? 'pointer' : 'default', userSelect: 'none', width: col.width }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                     {col.label}
@@ -63,7 +61,8 @@ const DataTable = ({
             <AnimatePresence>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
+                  <td colSpan={columns.length}
+                    style={{ textAlign: 'center', padding: '3rem 1rem', fontFamily: "'Satoshi',sans-serif", fontWeight: 500, color: '#888' }}>
                     {emptyMessage}
                   </td>
                 </tr>
@@ -71,7 +70,7 @@ const DataTable = ({
                 data.map((row, i) => (
                   <motion.tr
                     key={row[rowKey] || i}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.03 * i }}
                     onClick={() => onRowClick?.(row)}
@@ -79,7 +78,7 @@ const DataTable = ({
                     onMouseLeave={() => setHoveredRow(null)}
                     style={{
                       cursor: onRowClick ? 'pointer' : 'default',
-                      background: hoveredRow === row[rowKey] ? 'rgba(59, 130, 246, 0.03)' : 'transparent'
+                      background: hoveredRow === row[rowKey] ? 'rgba(255,225,124,0.2)' : 'transparent',
                     }}
                   >
                     {columns.map((col) => (
@@ -97,29 +96,26 @@ const DataTable = ({
 
       {pagination && pagination.pages > 1 && (
         <div style={{
-          padding: '0.875rem 1.5rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderTop: '1px solid var(--border)'
+          padding: '1rem 1.5rem', display: 'flex',
+          justifyContent: 'space-between', alignItems: 'center',
+          borderTop: '2px solid #000', background: '#f9f9f9',
+          flexWrap: 'wrap', gap: '0.75rem',
         }}>
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+          <span style={{ fontFamily: "'Satoshi',sans-serif", fontSize: '0.8125rem', fontWeight: 500, color: '#555' }}>
             Page {pagination.page} of {pagination.pages} ({pagination.total} total)
           </span>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              className="btn btn-sm btn-outline"
+            <button className="btn btn-sm btn-outline"
               disabled={pagination.page <= 1}
               onClick={() => onPageChange?.(pagination.page - 1)}
             >
-              <HiOutlineChevronLeft size={14} /> Previous
+              <HiOutlineChevronLeft size={13} /> Previous
             </button>
-            <button
-              className="btn btn-sm btn-outline"
+            <button className="btn btn-sm btn-primary"
               disabled={pagination.page >= pagination.pages}
               onClick={() => onPageChange?.(pagination.page + 1)}
             >
-              Next <HiOutlineChevronRight size={14} />
+              Next <HiOutlineChevronRight size={13} />
             </button>
           </div>
         </div>

@@ -53,7 +53,7 @@ const Analytics = () => {
           datasets: [{
             label: 'Students',
             data: Object.values(analytics.scoreRanges || {}),
-            backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'],
+            backgroundColor: ['#171e19', '#272727', '#b7c6c2', '#ffe17c', '#e2e8f0', '#ffe17c'],
             borderRadius: 8, borderSkipped: false
           }]
         },
@@ -68,7 +68,7 @@ const Analytics = () => {
           labels: Object.keys(analytics.gradeDistribution || {}),
           datasets: [{
             data: Object.values(analytics.gradeDistribution || {}),
-            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#f97316', '#ec4899', '#ef4444'],
+            backgroundColor: ['#ffe17c', '#b7c6c2', '#171e19', '#272727', '#ffffff', '#b7c6c2'],
             borderWidth: 0, hoverOffset: 8
           }]
         },
@@ -102,7 +102,7 @@ const Analytics = () => {
             <StatCard title="Highest Score" value={analytics.highestScore} icon={HiOutlineChartBar} color="purple" delay={3} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
+          <div className="grid-layout-15-1">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card">
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem' }}>Score Distribution</h3>
               <div style={{ height: 280 }}><canvas ref={barRef} /></div>

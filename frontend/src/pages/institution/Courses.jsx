@@ -92,8 +92,8 @@ const Courses = () => {
               <motion.tr key={c._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'linear-gradient(135deg, rgba(245,158,11,0.1), rgba(59,130,246,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <HiOutlineBookOpen size={16} style={{ color: '#f59e0b' }} />
+                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--yellow)', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '1px 1px 0px #000', flexShrink: 0 }}>
+                      <HiOutlineBookOpen size={16} style={{ color: '#000' }} />
                     </div>
                     <div>
                       <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>{c.title}</div>
@@ -126,17 +126,17 @@ const Courses = () => {
       {showModal && (
         <div onClick={(e) => e.target === e.currentTarget && setShowModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', padding: '1rem' }}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', width: '100%', maxWidth: 560, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            style={{ background: '#fff', border: '2px solid #000', borderRadius: 'var(--radius)', width: '100%', maxWidth: 560, boxShadow: '8px 8px 0px #000', overflow: 'hidden' }}>
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>{editingId ? 'Edit' : 'Add'} Course</h3>
             </div>
             <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
               <div className="form-group"><label className="form-label">Course Title</label><input className="form-input" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
                 <div className="form-group"><label className="form-label">Course Code</label><input className="form-input" required value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} /></div>
                 <div className="form-group"><label className="form-label">Credit Units</label><input className="form-input" type="number" min="1" max="10" value={form.creditUnits} onChange={(e) => setForm({ ...form, creditUnits: parseInt(e.target.value) })} /></div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-3" style={{ gap: '1rem' }}>
                 <div className="form-group"><label className="form-label">Department</label>
                   <select className="form-input form-select" value={form.departmentId} onChange={(e) => setForm({ ...form, departmentId: e.target.value })}><option value="">Select...</option>{departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}</select>
                 </div>

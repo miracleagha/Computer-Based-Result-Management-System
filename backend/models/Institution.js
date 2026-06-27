@@ -94,7 +94,7 @@ const institutionSchema = new mongoose.Schema({
 
 // Index
 institutionSchema.index({ status: 1 });
-institutionSchema.index({ code: 1 });
+// Note: code already has a unique index from `unique: true` in schema definition
 
 const Institution = mongoose.model('Institution', institutionSchema);
 export default Institution;

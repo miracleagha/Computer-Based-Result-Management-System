@@ -230,3 +230,219 @@ h1, h2, h3, h4, h5, h6 {
   .footer-grid { grid-template-columns: 1fr; }
   .stats-row   { display: grid; grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Neo-Brutalist standard Card ───────────────── */
+.card {
+  background: var(--white);
+  border: 2px solid #000000;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Responsive Layout Grid Utilities ──────────── */
+.grid-layout-2-sidebar {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .grid-layout-2-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-layout-1-320 {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+}
+@media (max-width: 768px) {
+  .grid-layout-1-320 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-layout-15-1 {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 768px) {
+  .grid-layout-15-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-layout-1-1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 580px) {
+  .grid-layout-1-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-layout-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .grid-layout-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .grid-layout-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD — Stat Cards Grid
+══════════════════════════════════════════════════ */
+.dashboard-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  .dashboard-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 400px) {
+  .dashboard-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD — Page Content Padding
+══════════════════════════════════════════════════ */
+.page-content {
+  padding: 1.5rem;
+}
+@media (max-width: 768px) {
+  .page-content {
+    padding: 1rem !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   STUDENT DASHBOARD — CGPA Hero
+══════════════════════════════════════════════════ */
+.student-cgpa-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.cgpa-circle {
+  width: 90px; height: 90px;
+  border-radius: 50%; border: 3px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; background: #fff;
+  box-shadow: 3px 3px 0px #000; flex-shrink: 0;
+}
+@media (max-width: 540px) {
+  .student-cgpa-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .cgpa-circle {
+    align-self: flex-end;
+    width: 76px; height: 76px;
+    margin-top: -2rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   STUDENT DASHBOARD — Result Rows
+══════════════════════════════════════════════════ */
+.result-row-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.result-table-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #555;
+}
+@media (max-width: 640px) {
+  .result-table-header { display: none; }
+  .result-row-stats {
+    width: 100%;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    margin-top: 0.25rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   INSTITUTION DASHBOARD — Chart + Approvals
+══════════════════════════════════════════════════ */
+.chart-container {
+  height: 260px;
+  position: relative;
+}
+@media (max-width: 640px) {
+  .chart-container {
+    height: 220px;
+  }
+}
+
+.approval-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.approval-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+  cursor: pointer;
+}
+
+.approval-item-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background: #ffe17c;
+  border: 2px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 2px 2px 0px #000;
+}
+
+@media (max-width: 400px) {
+  .approval-item { gap: 0.5rem; padding: 0.625rem; }
+  .approval-item-icon { width: 32px; height: 32px; box-shadow: none; }
+}

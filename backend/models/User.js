@@ -80,7 +80,7 @@ userSchema.virtual('fullName').get(function() {
 
 // Index for faster queries
 userSchema.index({ role: 1, institutionId: 1 });
-userSchema.index({ email: 1 });
+// Note: email already has a unique index from `unique: true` in schema definition
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

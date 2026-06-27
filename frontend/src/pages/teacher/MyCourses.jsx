@@ -40,7 +40,7 @@ const MyCourses = () => {
               className="card" style={{ cursor: 'pointer' }}
               onClick={() => navigate(`/result-entry?courseId=${course._id}`)}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
-                <div style={{ width: 50, height: 50, borderRadius: 'var(--radius-sm)', background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(5,150,105,0.15))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.75rem', color: 'var(--primary)', flexShrink: 0 }}>
+                <div style={{ width: 50, height: 50, borderRadius: 'var(--radius-sm)', background: 'var(--yellow)', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.75rem', color: '#000', boxShadow: '2px 2px 0px #000', flexShrink: 0 }}>
                   {course.code?.substring(0, 3)}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>

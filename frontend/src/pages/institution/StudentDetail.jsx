@@ -55,7 +55,7 @@ const StudentDetail = () => {
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '1.25rem' }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--yellow)', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '1.25rem', boxShadow: '2px 2px 0px #000' }}>
             {student.userId?.firstName?.charAt(0)}{student.userId?.lastName?.charAt(0)}
           </div>
           <div>

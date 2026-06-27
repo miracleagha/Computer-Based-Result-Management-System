@@ -28,32 +28,45 @@ const StatCard = ({ title, value, icon: Icon, color = 'var(--primary)', trend, t
     return () => clearInterval(timer);
   }, [value]);
 
-  const colorMap = {
-    blue: { bg: 'rgba(59,130,246,0.08)', icon: '#3b82f6', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
-    green: { bg: 'rgba(16,185,129,0.08)', icon: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
-    amber: { bg: 'rgba(245,158,11,0.08)', icon: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
-    red: { bg: 'rgba(239,68,68,0.08)', icon: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #dc2626)' },
-    purple: { bg: 'rgba(139,92,246,0.08)', icon: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }
+  const bgMap = {
+    yellow:  '#ffe17c',
+    sage:    '#b7c6c2',
+    white:   '#ffffff',
+    dark:    '#171e19',
+    blue:    '#ffe17c',   // fallback → yellow
+    green:   '#b7c6c2',
+    amber:   '#ffffff',
+    purple:  '#ffe17c',
+    red:     '#ffffff',
   };
 
-  const colors = colorMap[color] || colorMap.blue;
+  const bg       = bgMap[color] || bgMap.yellow;
+  const isDark   = bg === '#171e19';
+  const textClr  = isDark ? '#fff' : '#000';
+  const mutedClr = isDark ? '#b7c6c2' : '#555';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: delay * 0.1 }}
-      className="card"
+      transition={{ duration: 0.45, delay: delay * 0.08 }}
+      whileHover={{ x: 2, y: 2, boxShadow: '2px 2px 0px #000' }}
       style={{
+        background: bg,
+        border: '2px solid #000',
+        borderRadius: '0.75rem',
+        padding: '1.5rem',
+        boxShadow: '4px 4px 0px #000',
+        transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        cursor: 'default',
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         gap: '1rem',
-        cursor: 'default'
       }}
     >
       <div>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 500, marginBottom: '0.5rem' }}>
+        <p style={{ fontSize: '0.8125rem', color: mutedClr, fontWeight: 500, marginBottom: '0.5rem' }}>
           {title}
         </p>
         <motion.h3
@@ -61,7 +74,7 @@ const StatCard = ({ title, value, icon: Icon, color = 'var(--primary)', trend, t
           style={{
             fontSize: '1.75rem',
             fontWeight: 800,
-            color: 'var(--text-primary)',
+            color: textClr,
             lineHeight: 1.1,
             letterSpacing: '-0.025em'
           }}
@@ -80,22 +93,24 @@ const StatCard = ({ title, value, icon: Icon, color = 'var(--primary)', trend, t
           }}>
             <span>{trend === 'up' ? '↑' : '↓'}</span>
             <span>{trendValue}</span>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>vs last month</span>
+            <span style={{ color: mutedClr, fontWeight: 400 }}>vs last month</span>
           </div>
         )}
       </div>
 
       <div style={{
-        width: 48,
-        height: 48,
-        borderRadius: 'var(--radius)',
-        background: colors.bg,
+        width: 44,
+        height: 44,
+        background: isDark ? '#ffe17c' : '#000',
+        border: '2px solid #000',
+        borderRadius: '0.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        boxShadow: '2px 2px 0px #000',
         flexShrink: 0
       }}>
-        <Icon style={{ fontSize: '1.375rem', color: colors.icon }} />
+        <Icon style={{ fontSize: '1.25rem', color: isDark ? '#000' : (bg === '#ffe17c' ? '#000' : '#fff') }} />
       </div>
     </motion.div>
   );

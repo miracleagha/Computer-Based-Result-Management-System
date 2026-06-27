@@ -58,19 +58,24 @@ const Transcript = () => {
 
       {/* CGPA Summary */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="card" style={{ background: 'linear-gradient(135deg, #1e40af, #059669)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', padding: '1.5rem 2rem' }}>
+        className="card" style={{
+          background: 'var(--yellow)',
+          color: '#000', marginBottom: '1.5rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem 2rem',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
         <div>
-          <p style={{ opacity: 0.7, fontSize: '0.8125rem', marginBottom: '0.25rem' }}>Cumulative GPA</p>
-          <div style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1 }}>{formatGPA(data.cgpa)}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <p style={{ color: '#555', fontSize: '0.8125rem', marginBottom: '0.25rem', fontWeight: 500 }}>Cumulative GPA</p>
+          <div style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1, fontFamily: "'Cabinet Grotesk', sans-serif" }}>{formatGPA(data.cgpa)}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', fontFamily: "'Satoshi', sans-serif" }}>
             <HiOutlineTrophy size={16} />
-            <span style={{ fontWeight: 600 }}>{data.classification}</span>
+            <span style={{ fontWeight: 700 }}>{data.classification}</span>
           </div>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>{data.student?.name}</div>
-          <div style={{ fontSize: '0.8125rem', opacity: 0.7 }}>{data.student?.matricNumber}</div>
-          <div style={{ fontSize: '0.8125rem', opacity: 0.7 }}>{data.student?.department}</div>
+        <div style={{ textAlign: 'right', fontFamily: "'Satoshi', sans-serif" }}>
+          <div style={{ fontSize: '0.875rem', fontWeight: 700 }}>{data.student?.name}</div>
+          <div style={{ fontSize: '0.8125rem', color: '#333', fontWeight: 500 }}>{data.student?.matricNumber}</div>
+          <div style={{ fontSize: '0.8125rem', color: '#333', fontWeight: 500 }}>{data.student?.department}</div>
         </div>
       </motion.div>
 

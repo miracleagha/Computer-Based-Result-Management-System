@@ -14,19 +14,19 @@ import institutionRoutes from './routes/institution.js';
 import teacherRoutes from './routes/teacher.js';
 import studentRoutes from './routes/student.js';
 
-// Load env variables
+// Load env variables — MUST be before any code that reads process.env
 dotenv.config();
 
 // Initialize express
 const app = express();
 
-// Connect to database
+// Connect to database (env vars are now available)
 connectDB();
 
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: '*',
+  origin: true,
   credentials: true
 }));
 
@@ -80,11 +80,20 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
   console.log(`📡 API: http://localhost:${PORT}/api/health`);
   console.log(`📋 Admin Dashboard: http://localhost:5174`);
   console.log(`🎓 Frontend Portal: http://localhost:5173\n`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Port ${PORT} is already in use.`);
+    console.error(`   Try: npx kill-port ${PORT}  — or change PORT in .env\n`);
+    process.exit(1);
+  }
+  throw err;
 });
 
 export default app;

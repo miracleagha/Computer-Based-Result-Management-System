@@ -51,7 +51,7 @@ const Profile = () => {
 
       {/* Profile Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, #1e40af, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.5rem', flexShrink: 0 }}>
+        <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--yellow)', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 800, fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: '1.75rem', flexShrink: 0, boxShadow: '2px 2px 0px #000' }}>
           {user?.firstName?.[0]}{user?.lastName?.[0]}
         </div>
         <div>
@@ -62,10 +62,10 @@ const Profile = () => {
       </motion.div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '0.25rem', width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.5rem', background: '#fff', border: '2px solid #000', borderRadius: 'var(--radius-sm)', padding: '0.25rem', width: 'fit-content' }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8125rem', fontWeight: 600, transition: 'var(--transition)', background: tab === t.id ? 'var(--primary)' : 'transparent', color: tab === t.id ? 'white' : 'var(--text-secondary)' }}>
+            style={{ padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-sm)', border: tab === t.id ? '2px solid #000' : '2px solid transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8125rem', fontWeight: 700, transition: 'var(--transition)', background: tab === t.id ? 'var(--yellow)' : 'transparent', color: '#000', boxShadow: tab === t.id ? '2px 2px 0px #000' : 'none' }}>
             <t.icon size={16} /> {t.label}
           </button>
         ))}
@@ -75,7 +75,7 @@ const Profile = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card">
           <h3 style={{ fontWeight: 700, marginBottom: '1.5rem' }}>Personal Information</h3>
           <form onSubmit={handleProfileUpdate}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
               <div className="form-group"><label className="form-label">First Name</label><input className="form-input" value={profileForm.firstName} onChange={e => setProfileForm(f => ({ ...f, firstName: e.target.value }))} /></div>
               <div className="form-group"><label className="form-label">Last Name</label><input className="form-input" value={profileForm.lastName} onChange={e => setProfileForm(f => ({ ...f, lastName: e.target.value }))} /></div>
             </div>

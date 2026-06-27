@@ -80,8 +80,8 @@ const Sessions = () => {
           <motion.div key={session._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-sm)', background: session.isActive ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <HiOutlineCalendarDays size={20} style={{ color: session.isActive ? '#fff' : 'var(--text-muted)' }} />
+                <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-sm)', background: session.isActive ? 'var(--yellow)' : '#fff', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '2px 2px 0px #000', flexShrink: 0 }}>
+                  <HiOutlineCalendarDays size={20} style={{ color: '#000' }} />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-primary)' }}>{session.name}</h3>
@@ -128,11 +128,11 @@ const Sessions = () => {
       {/* Session Modal */}
       {showModal && (
         <div onClick={(e) => e.target === e.currentTarget && setShowModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', padding: '1rem' }}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', width: '100%', maxWidth: 480, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#fff', borderRadius: 'var(--radius)', border: '2px solid #000', width: '100%', maxWidth: 480, boxShadow: '8px 8px 0px #000', overflow: 'hidden' }}>
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' }}><h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>{editingId ? 'Edit' : 'New'} Session</h3></div>
             <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
               <div className="form-group"><label className="form-label">Session Name</label><input className="form-input" required placeholder="e.g., 2025/2026" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
                 <div className="form-group"><label className="form-label">Start Date</label><input className="form-input" type="date" required value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></div>
                 <div className="form-group"><label className="form-label">End Date</label><input className="form-input" type="date" required value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} /></div>
               </div>
@@ -148,7 +148,7 @@ const Sessions = () => {
       {/* Semester Modal */}
       {showSemesterModal && (
         <div onClick={(e) => e.target === e.currentTarget && setShowSemesterModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', padding: '1rem' }}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', width: '100%', maxWidth: 480, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#fff', borderRadius: 'var(--radius)', border: '2px solid #000', width: '100%', maxWidth: 480, boxShadow: '8px 8px 0px #000', overflow: 'hidden' }}>
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' }}><h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>Add Semester</h3></div>
             <form onSubmit={handleAddSemester} style={{ padding: '1.5rem' }}>
               <div className="form-group"><label className="form-label">Semester Name</label>
@@ -156,7 +156,7 @@ const Sessions = () => {
                   <option>First Semester</option><option>Second Semester</option>
                 </select>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-layout-1-1" style={{ gap: '1rem' }}>
                 <div className="form-group"><label className="form-label">Start Date</label><input className="form-input" type="date" required value={semesterForm.startDate} onChange={(e) => setSemesterForm({ ...semesterForm, startDate: e.target.value })} /></div>
                 <div className="form-group"><label className="form-label">End Date</label><input className="form-input" type="date" required value={semesterForm.endDate} onChange={(e) => setSemesterForm({ ...semesterForm, endDate: e.target.value })} /></div>
               </div>

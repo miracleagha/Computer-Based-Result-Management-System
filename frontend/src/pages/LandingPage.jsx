@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -88,7 +88,7 @@ const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  if (isAuthenticated) { navigate('/dashboard', { replace: true }); return null; }
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
 
   return (
     <div style={{ fontFamily: "'Satoshi', sans-serif", overflowX: 'hidden', background: '#171e19' }}>
@@ -120,6 +120,9 @@ const LandingPage = () => {
 
           {/* Desktop CTAs */}
           <div className="nav-cta" style={{ gap: '0.75rem', alignItems: 'center' }}>
+            <a onClick={() => navigate('/student-login')} style={{ fontFamily: "'Satoshi', sans-serif", fontWeight: 700, fontSize: '0.875rem', color: '#000', textDecoration: 'none', cursor: 'pointer', borderBottom: '2px solid #000', paddingBottom: '1px' }}>
+              🎓 Student Login
+            </a>
             <PushBtn variant="white" size="sm" onClick={() => navigate('/login')}>Sign In</PushBtn>
             <PushBtn variant="black" size="sm" onClick={() => navigate('/register')}>Start Free Trial</PushBtn>
           </div>
@@ -164,6 +167,7 @@ const LandingPage = () => {
                 </a>
               ))}
               <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <PushBtn variant="sage" onClick={() => { navigate('/student-login'); setMobileNavOpen(false); }} style={{ width: '100%', justifyContent: 'center' }}>🎓 Student Login</PushBtn>
                 <PushBtn variant="white" onClick={() => { navigate('/login'); setMobileNavOpen(false); }} style={{ width: '100%', justifyContent: 'center' }}>Sign In</PushBtn>
                 <PushBtn variant="black" onClick={() => { navigate('/register'); setMobileNavOpen(false); }} style={{ width: '100%', justifyContent: 'center' }}>Start Free Trial</PushBtn>
               </div>
@@ -203,6 +207,9 @@ const LandingPage = () => {
                   Register Institution <HiOutlineArrowRight />
                 </PushBtn>
                 <PushBtn variant="white" size="lg" onClick={() => navigate('/login')}>Sign In →</PushBtn>
+                <PushBtn variant="sage" size="lg" onClick={() => navigate('/student-login')}>
+                  <HiOutlineAcademicCap /> Student Login
+                </PushBtn>
               </motion.div>
 
               <motion.div custom={4} variants={fadeUp} className="stats-row" style={{ display:'flex', gap:'2rem', marginTop:'2rem', flexWrap:'wrap' }}>

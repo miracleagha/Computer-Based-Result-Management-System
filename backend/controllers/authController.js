@@ -268,8 +268,8 @@ export const forgotPassword = async (req, res) => {
 
     // Generate reset token (simple approach using JWT)
     const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpires = Date.now() + 15 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
     // Send password reset email
@@ -303,17 +303,17 @@ export const resetPassword = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({
       _id: decoded.id,
-      resetPasswordToken: token,
-      resetPasswordExpire: { $gt: Date.now() }
-    });
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() }
+    }).select('+passwordResetToken +passwordResetExpires');
 
     if (!user) {
       return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
     }
 
     user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
     await user.save();
 
     await logAudit({
