@@ -16,17 +16,26 @@ const defaultScales = [
 
 const GradingScales = () => {
   const [scales, setScales] = useState([]);
+  const [scaleId, setScaleId] = useState(null); // track the document's _id for the PATCH call
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editedScales, setEditedScales] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { fetchScales(); }, []);
 
   const fetchScales = async () => {
     try {
       const res = await axios.get('/api/institution/grading-scales');
-      const data = res.data.data?.scales || res.data.data || [];
-      setScales(data.length > 0 ? data : defaultScales);
+      // res.data.data is an array of GradingScale documents
+      const docs = res.data.data;
+      if (Array.isArray(docs) && docs.length > 0) {
+        const doc = docs[0]; // each institution has one grading scale
+        setScaleId(doc._id);
+        setScales(doc.scales?.length > 0 ? doc.scales : defaultScales);
+      } else {
+        setScales(defaultScales);
+      }
     } catch {
       setScales(defaultScales);
     } finally { setLoading(false); }
@@ -52,12 +61,16 @@ const GradingScales = () => {
   };
 
   const saveScales = async () => {
+    setSaving(true);
     try {
-      await axios.put('/api/institution/grading-scales', { scales: editedScales });
+      // Use the convenience endpoint that doesn't require knowing the scale _id
+      await axios.put('/api/institution/grading-scales/my', { scales: editedScales });
       toast.success('Grading scale updated');
       setScales(editedScales);
       setEditing(false);
-    } catch (error) { toast.error(error.response?.data?.message || 'Failed to save'); }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save');
+    } finally { setSaving(false); }
   };
 
   const gradeColorMap = {
@@ -78,8 +91,10 @@ const GradingScales = () => {
             <button onClick={startEditing} className="btn btn-primary btn-sm"><HiOutlinePencilSquare size={16} /> Edit Scale</button>
           ) : (
             <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button onClick={() => setEditing(false)} className="btn btn-outline btn-sm">Cancel</button>
-              <button onClick={saveScales} className="btn btn-primary btn-sm">Save Changes</button>
+              <button onClick={() => setEditing(false)} className="btn btn-outline btn-sm" disabled={saving}>Cancel</button>
+              <button onClick={saveScales} className="btn btn-primary btn-sm" disabled={saving}>
+                {saving ? 'Saving…' : 'Save Changes'}
+              </button>
             </div>
           )}
         </div>

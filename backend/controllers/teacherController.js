@@ -3,6 +3,8 @@ import Result from '../models/Result.js';
 import Enrollment from '../models/Enrollment.js';
 import GradingScale from '../models/GradingScale.js';
 import User from '../models/User.js';
+import Session from '../models/Session.js';
+import Semester from '../models/Semester.js';
 import { logAudit } from '../middleware/auditLogger.js';
 import { calculateSemesterGPA } from '../utils/gpaCalculator.js';
 
@@ -369,10 +371,36 @@ export const updateResult = async (req, res) => {
 };
 
 /**
- * @desc    Bulk upload results from parsed CSV data
- * @route   POST /api/teacher/results/bulk
+ * @desc    Get sessions for this teacher's institution (for result-entry dropdowns).
+ * @route   GET /api/teacher/sessions
  * @access  Private/Teacher
  */
+export const getSessions = async (req, res) => {
+  try {
+    const sessions = await Session.find({ institutionId: req.user.institutionId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: sessions });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch sessions', error: error.message });
+  }
+};
+
+/**
+ * @desc    Get semesters for this teacher's institution (for result-entry dropdowns).
+ * @route   GET /api/teacher/semesters
+ * @access  Private/Teacher
+ */
+export const getSemesters = async (req, res) => {
+  try {
+    const { sessionId } = req.query;
+    const query = { institutionId: req.user.institutionId };
+    if (sessionId) query.sessionId = sessionId;
+    const semesters = await Semester.find(query).populate('sessionId', 'name').sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: semesters });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch semesters', error: error.message });
+  }
+}; 
+
 export const bulkUploadResults = async (req, res) => {
   try {
     const { results: resultRows, courseId, semesterId, sessionId } = req.body;
@@ -423,3 +451,4 @@ export const bulkUploadResults = async (req, res) => {
     res.status(500).json({ success: false, message: 'Bulk upload failed', error: error.message });
   }
 };
+

@@ -327,3 +327,27 @@ export const resetPassword = async (req, res) => {
     res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
   }
 };
+
+/**
+ * @desc    Update current user's basic profile (any role)
+ * @route   PUT /api/auth/profile
+ * @access  Private
+ */
+export const updateProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, phone, avatar } = req.body;
+    const update = {};
+    if (firstName !== undefined) update.firstName = firstName;
+    if (lastName !== undefined) update.lastName = lastName;
+    if (phone !== undefined) update.phone = phone;
+    if (avatar !== undefined) update.avatar = avatar;
+
+    const user = await User.findByIdAndUpdate(req.user._id, update, {
+      new: true, runValidators: true
+    }).populate('institutionId', 'name code logo status');
+
+    res.status(200).json({ success: true, message: 'Profile updated', data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update profile', error: error.message });
+  }
+};

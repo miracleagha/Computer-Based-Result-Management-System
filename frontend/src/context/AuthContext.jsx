@@ -30,13 +30,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, expectedRole = null) => {
     const response = await axios.post('/api/auth/login', { email, password });
     const { user: userData, accessToken, refreshToken } = response.data.data;
-    // Only allow non-admin roles
+
+    // Admins never sign in through this portal
     if (userData.role === 'admin') {
       throw new Error('Please use the admin portal to login.');
     }
+
+    // If the caller pinned a specific role (e.g. the student login page),
+    // reject any mismatch and clear the just-issued tokens so we don't
+    // partially authenticate.
+    if (expectedRole && userData.role !== expectedRole) {
+      const label = expectedRole === 'student' ? 'students' : expectedRole + 's';
+      throw new Error(`This login page is for ${label} only.`);
+    }
+
+    // The main /login page is only for institution admins and teachers —
+    // students must use /student-login (their credentials came by email).
+    if (!expectedRole && userData.role === 'student') {
+      throw new Error('Students must sign in from the Student Portal.');
+    }
+
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     setUser(userData);

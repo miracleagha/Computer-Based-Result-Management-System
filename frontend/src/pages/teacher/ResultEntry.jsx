@@ -27,8 +27,8 @@ const ResultEntry = () => {
       try {
         const [courseRes, sessRes, semRes] = await Promise.all([
           axios.get('/api/teacher/courses'),
-          axios.get('/api/institution/sessions'),
-          axios.get('/api/institution/semesters')
+          axios.get('/api/teacher/sessions'),
+          axios.get('/api/teacher/semesters')
         ]);
         setCourses(courseRes.data.data);
         setSessions(sessRes.data.data);

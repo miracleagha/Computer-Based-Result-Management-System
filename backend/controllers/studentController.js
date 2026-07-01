@@ -219,9 +219,16 @@ export const registerCourses = async (req, res) => {
     const studentId = req.user._id;
     const institutionId = req.user.institutionId;
 
+    if (!Array.isArray(courseIds) || courseIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'courseIds must be a non-empty array' });
+    }
+
     const activeSemester = await Semester.findOne({ institutionId, isActive: true }).populate('sessionId');
     if (!activeSemester) {
-      return res.status(400).json({ success: false, message: 'No active semester' });
+      return res.status(400).json({ success: false, message: 'No active semester. Ask your institution to activate a semester.' });
+    }
+    if (activeSemester.registrationDeadline && new Date() > activeSemester.registrationDeadline) {
+      return res.status(400).json({ success: false, message: 'Registration deadline has passed for the active semester.' });
     }
 
     const enrollments = [];
@@ -229,6 +236,16 @@ export const registerCourses = async (req, res) => {
 
     for (const courseId of courseIds) {
       try {
+        // Confirm course exists and belongs to the institution
+        const course = await Course.findOne({ _id: courseId, institutionId, isActive: true });
+        if (!course) { errors.push({ courseId, error: 'Course not found or inactive' }); continue; }
+
+        // Skip if already enrolled in this active semester
+        const already = await Enrollment.findOne({
+          studentId, courseId, semesterId: activeSemester._id, sessionId: activeSemester.sessionId._id
+        });
+        if (already) { errors.push({ courseId, error: 'Already registered for this course' }); continue; }
+
         const enrollment = await Enrollment.create({
           studentId, courseId,
           semesterId: activeSemester._id,
@@ -243,11 +260,68 @@ export const registerCourses = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `${enrollments.length} courses registered`,
+      message: `${enrollments.length} course(s) registered`,
       data: { enrollments, errors }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to register courses', error: error.message });
+  }
+};
+
+/**
+ * @desc    List courses the student is currently registered for.
+ *          Optionally filter by ?semesterId= or ?sessionId=. Defaults to the active semester.
+ * @route   GET /api/student/courses/registered
+ * @access  Private/Student
+ */
+export const getRegisteredCourses = async (req, res) => {
+  try {
+    const studentId = req.user._id;
+    const institutionId = req.user.institutionId;
+    const { semesterId, sessionId } = req.query;
+
+    const filter = { studentId, status: 'registered' };
+    if (semesterId) filter.semesterId = semesterId;
+    if (sessionId) filter.sessionId = sessionId;
+
+    // If no filter provided, default to the active semester (if any)
+    if (!semesterId && !sessionId) {
+      const activeSemester = await Semester.findOne({ institutionId, isActive: true });
+      if (activeSemester) filter.semesterId = activeSemester._id;
+    }
+
+    const enrollments = await Enrollment.find(filter)
+      .populate({ path: 'courseId', select: 'title code creditUnits level', populate: { path: 'teacherId', select: 'firstName lastName' } })
+      .populate('semesterId', 'name')
+      .populate('sessionId', 'name')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: enrollments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch registered courses', error: error.message });
+  }
+};
+
+/**
+ * @desc    Drop a course the student is registered for.
+ *          Only allowed if the semester's registration deadline hasn't passed.
+ * @route   DELETE /api/student/enrollments/:id
+ * @access  Private/Student
+ */
+export const dropCourse = async (req, res) => {
+  try {
+    const enrollment = await Enrollment.findOne({ _id: req.params.id, studentId: req.user._id });
+    if (!enrollment) return res.status(404).json({ success: false, message: 'Enrollment not found' });
+
+    const semester = await Semester.findById(enrollment.semesterId);
+    if (semester?.registrationDeadline && new Date() > semester.registrationDeadline) {
+      return res.status(400).json({ success: false, message: 'Registration deadline passed — cannot drop this course.' });
+    }
+
+    await Enrollment.deleteOne({ _id: enrollment._id });
+    res.status(200).json({ success: true, message: 'Course dropped' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to drop course', error: error.message });
   }
 };
 
@@ -295,6 +369,23 @@ export const markNotificationRead = async (req, res) => {
 };
 
 /**
+ * @desc    Mark every notification for this student as read
+ * @route   PUT /api/student/notifications/read-all
+ * @access  Private/Student
+ */
+export const markAllNotificationsRead = async (req, res) => {
+  try {
+    const result = await Notification.updateMany(
+      { recipientId: req.user._id, isRead: false },
+      { isRead: true }
+    );
+    res.status(200).json({ success: true, message: `${result.modifiedCount} marked as read` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to mark notifications', error: error.message });
+  }
+};
+
+/**
  * @desc    Get student profile
  * @route   GET /api/student/profile
  * @access  Private/Student
@@ -318,10 +409,18 @@ export const getProfile = async (req, res) => {
  * @desc    Get available semesters for viewing results
  * @route   GET /api/student/semesters
  * @access  Private/Student
+ *
+ * By default returns only semesters that have approved results for the student.
+ * Pass ?all=true to list every semester in the institution (used for filter dropdowns).
  */
 export const getSemesters = async (req, res) => {
   try {
-    // Get semesters that have approved results for this student
+    if (req.query.all === 'true') {
+      const semesters = await Semester.find({ institutionId: req.user.institutionId })
+        .populate('sessionId', 'name')
+        .sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, data: semesters });
+    }
     const resultSemesters = await Result.distinct('semesterId', { studentId: req.user._id, status: 'approved' });
     const semesters = await Semester.find({ _id: { $in: resultSemesters } })
       .populate('sessionId', 'name')
@@ -330,5 +429,44 @@ export const getSemesters = async (req, res) => {
     res.status(200).json({ success: true, data: semesters });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch semesters', error: error.message });
+  }
+};
+
+/**
+ * @desc    List sessions in the student's institution (for filter dropdowns).
+ * @route   GET /api/student/sessions
+ * @access  Private/Student
+ */
+export const getSessions = async (req, res) => {
+  try {
+    const sessions = await Session.find({ institutionId: req.user.institutionId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: sessions });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch sessions', error: error.message });
+  }
+};
+
+/**
+ * @desc    Update student-specific profile fields (guardian, etc.).
+ *          Basic user fields go through PUT /api/auth/profile.
+ * @route   PUT /api/student/profile
+ * @access  Private/Student
+ */
+export const updateStudentProfile = async (req, res) => {
+  try {
+    const { guardianName, guardianPhone } = req.body;
+    const update = {};
+    if (guardianName !== undefined) update.guardianName = guardianName;
+    if (guardianPhone !== undefined) update.guardianPhone = guardianPhone;
+
+    const profile = await StudentProfile.findOneAndUpdate(
+      { userId: req.user._id },
+      update,
+      { new: true, runValidators: true }
+    ).populate('departmentId', 'name code');
+
+    res.status(200).json({ success: true, data: profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update profile', error: error.message });
   }
 };

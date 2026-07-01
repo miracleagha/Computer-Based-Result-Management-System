@@ -25,14 +25,7 @@ const StudentLogin = () => {
     if (!email || !password) { toast.error('Please enter your email and password'); return; }
     setLoading(true);
     try {
-      const userData = await login(email, password);
-      if (userData.role !== 'student') {
-        // Non-student logged in on student portal — clear the session
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        toast.error('This login is for students only. Please use the main login page.');
-        return;
-      }
+      const userData = await login(email, password, 'student');
       toast.success(`Welcome back, ${userData.firstName}! 🎓`);
       navigate('/dashboard');
     } catch (error) {

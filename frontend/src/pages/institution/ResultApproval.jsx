@@ -20,25 +20,35 @@ const ResultApproval = () => {
       const res = await axios.get('/api/institution/results?status=submitted');
       setResults(res.data.data || []);
     } catch {
-      setResults([
-        { _id: '1', courseId: { title: 'Introduction to Programming', code: 'CSC101' }, teacherId: { firstName: 'Dr. James', lastName: 'Wilson' }, semesterId: { name: 'First Semester' }, sessionId: { name: '2024/2025' }, studentsCount: 45, submittedAt: '2026-06-05', status: 'submitted', avgScore: 62.5 },
-        { _id: '2', courseId: { title: 'Calculus I', code: 'MTH101' }, teacherId: { firstName: 'Prof. Sarah', lastName: 'Chen' }, semesterId: { name: 'First Semester' }, sessionId: { name: '2024/2025' }, studentsCount: 60, submittedAt: '2026-06-06', status: 'submitted', avgScore: 55.3 },
-        { _id: '3', courseId: { title: 'Data Structures', code: 'CSC201' }, teacherId: { firstName: 'Dr. James', lastName: 'Wilson' }, semesterId: { name: 'Second Semester' }, sessionId: { name: '2024/2025' }, studentsCount: 38, submittedAt: '2026-06-07', status: 'submitted', avgScore: 68.1 }
-      ]);
+      setResults([]);
     } finally { setLoading(false); }
   };
 
-  const handleApprove = async (id) => {
+  const handleApprove = async (batch) => {
     try {
-      await axios.put(`/api/institution/results/${id}/approve`);
-      toast.success('Results approved successfully');
+      await axios.post('/api/institution/results/bulk-approve', {
+        courseId: batch.courseId?._id,
+        semesterId: batch.semesterId?._id,
+        sessionId: batch.sessionId?._id,
+        resultIds: batch.resultIds
+      });
+      toast.success('Results approved — students notified');
       fetchResults();
     } catch (error) { toast.error(error.response?.data?.message || 'Approval failed'); }
   };
 
   const handleReject = async () => {
+    if (!rejectionReason.trim()) { toast.error('Reason required'); return; }
     try {
-      await axios.put(`/api/institution/results/${rejectId}/reject`, { reason: rejectionReason });
+      const batch = results.find(r => r._id === rejectId);
+      if (!batch) throw new Error('Batch not found');
+      await axios.post('/api/institution/results/bulk-reject', {
+        courseId: batch.courseId?._id,
+        semesterId: batch.semesterId?._id,
+        sessionId: batch.sessionId?._id,
+        resultIds: batch.resultIds,
+        reason: rejectionReason
+      });
       toast.success('Results rejected');
       setShowRejectModal(false); setRejectionReason(''); setRejectId(null); fetchResults();
     } catch (error) { toast.error(error.response?.data?.message || 'Rejection failed'); }
@@ -82,7 +92,7 @@ const ResultApproval = () => {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => handleApprove(result._id)} className="btn btn-sm btn-secondary">
+                  <button onClick={() => handleApprove(result)} className="btn btn-sm btn-secondary">
                     <HiOutlineCheckCircle size={16} /> Approve
                   </button>
                   <button onClick={() => { setRejectId(result._id); setShowRejectModal(true); }} className="btn btn-sm btn-danger">

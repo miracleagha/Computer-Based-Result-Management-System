@@ -11,7 +11,9 @@ import {
   getCourseResults,
   getCourseAnalytics,
   updateProfile,
-  bulkUploadResults
+  bulkUploadResults,
+  getSessions,
+  getSemesters
 } from '../controllers/teacherController.js';
 
 const router = express.Router();
@@ -28,5 +30,7 @@ router.get('/results/:courseId', getCourseResults);
 router.get('/analytics/:courseId', getCourseAnalytics);
 router.put('/profile', updateProfile);
 router.post('/results/bulk', bulkUploadResults);
+router.get('/sessions', getSessions);
+router.get('/semesters', getSemesters);
 
 export default router;

@@ -4,8 +4,8 @@ import ax from 'axios';
 // Switch between local dev and Render by changing this one line.
 // Local:  'http://localhost:5000'
 // Render: 'https://your-app-name.onrender.com'
-// export const API_URL = 'http://localhost:5000';
-export const API_URL = 'https://computer-based-result-management-system.onrender.com';
+export const API_URL = 'http://localhost:5000';
+// export const API_URL = 'https://computer-based-result-management-system.onrender.com';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const axios = ax.create({
