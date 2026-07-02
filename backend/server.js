@@ -25,15 +25,19 @@ connectDB();
 
 // Security middleware
 app.use(helmet());
+
 app.use(cors({
   origin: true,
-  credentials: true
+  credentials: true,
 }));
 
-// Rate limiting
+// Rate limiting — generous enough for mobile/shared IPs, tight enough to deter abuse
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 300, // raised from 100 — mobile users share carrier IPs
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipFailedRequests: false, // still count failed requests
   message: { success: false, message: 'Too many requests, please try again later.' }
 });
 app.use('/api/', limiter);

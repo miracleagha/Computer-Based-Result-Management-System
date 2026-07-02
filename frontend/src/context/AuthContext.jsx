@@ -20,11 +20,15 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('accessToken');
       if (!token) { setLoading(false); return; }
       const response = await axios.get('/api/auth/me');
-      setUser(response.data.data);
+      const userData = response.data.data;
+      setUser(userData);
       setIsAuthenticated(true);
+      // Keep role cached so axios can redirect to the right login page
+      localStorage.setItem('user', JSON.stringify({ role: userData.role }));
     } catch {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
     } finally {
       setLoading(false);
     }
@@ -55,6 +59,8 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+    // Cache role so axios redirect helper knows which login page to use
+    localStorage.setItem('user', JSON.stringify({ role: userData.role }));
     setUser(userData);
     setIsAuthenticated(true);
     return userData;
@@ -64,6 +70,7 @@ export const AuthProvider = ({ children }) => {
     try { await axios.post('/api/auth/logout'); } catch {}
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
   };
