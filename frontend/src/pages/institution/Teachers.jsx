@@ -122,6 +122,7 @@ const Teachers = () => {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
         <table className="data-table">
           <thead><tr><th>Teacher</th><th>Courses Assigned</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
@@ -157,8 +158,7 @@ const Teachers = () => {
             ))}
           </tbody>
         </table>
-
-        {pagination.pages > 1 && (
+        </div>        {pagination.pages > 1 && (
           <div style={{ padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)' }}>
             <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Page {pagination.page} of {pagination.pages}</span>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -207,11 +207,11 @@ const Teachers = () => {
                   </Field>
                 </div>
 
-                <Field label="Email Address" required hint={editingId ? '' : 'Teacher receives login credentials here'}>
+                <Field label="Email Address" required hint={editingId ? 'Updating email will change the teacher\'s login credentials' : 'Teacher receives login credentials here'}>
                   <input style={inp('email')} type="email" placeholder="teacher@university.edu"
                     value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                     onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
-                    required disabled={!!editingId} />
+                    required />
                 </Field>
 
                 <Field label="Phone Number">

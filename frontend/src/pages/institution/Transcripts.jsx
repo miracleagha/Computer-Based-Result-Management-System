@@ -90,6 +90,7 @@ const Transcripts = () => {
                 <h3 style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9375rem' }}>{sem.semester}</h3>
                 <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--primary)' }}>GPA: {formatGPA(sem.gpa)}</span>
               </div>
+              <div style={{ overflowX: 'auto' }}>
               <table className="data-table">
                 <thead><tr><th>Code</th><th>Course Title</th><th>Credits</th><th>Score</th><th>Grade</th><th>GP</th></tr></thead>
                 <tbody>
@@ -108,6 +109,7 @@ const Transcripts = () => {
                   })}
                 </tbody>
               </table>
+              </div>
             </motion.div>
           ))}
 

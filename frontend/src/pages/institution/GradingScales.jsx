@@ -101,6 +101,7 @@ const GradingScales = () => {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
         <table className="data-table">
           <thead>
             <tr>
@@ -157,6 +158,7 @@ const GradingScales = () => {
             ))}
           </tbody>
         </table>
+        </div>
         {editing && (
           <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)' }}>
             <button onClick={addRow} className="btn btn-outline btn-sm"><HiOutlinePlusCircle size={16} /> Add Grade Row</button>

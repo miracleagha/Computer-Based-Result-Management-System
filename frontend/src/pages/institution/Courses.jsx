@@ -267,8 +267,14 @@ const Courses = () => {
                   </Field>
                   <Field label="Credit Units" required>
                     <input style={inp('cu')} type="number" min={1} max={12}
-                      value={form.creditUnits} onChange={(e) => setForm({ ...form, creditUnits: Math.max(1, Math.min(12, parseInt(e.target.value) || 1)) })}
-                      onFocus={() => setFocused('cu')} onBlur={() => setFocused(null)} required />
+                      value={form.creditUnits} onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '') { setForm({ ...form, creditUnits: '' }); return; }
+                        const num = parseInt(val);
+                        if (!isNaN(num)) setForm({ ...form, creditUnits: Math.max(1, Math.min(12, num)) });
+                      }}
+                      onBlur={() => { setFocused(null); if (form.creditUnits === '' || isNaN(form.creditUnits)) setForm(f => ({ ...f, creditUnits: 1 })); }}
+                      onFocus={() => setFocused('cu')} required />
                   </Field>
                 </div>
 

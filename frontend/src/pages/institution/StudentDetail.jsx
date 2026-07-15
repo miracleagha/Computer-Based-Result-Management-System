@@ -75,6 +75,7 @@ const StudentDetail = () => {
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Academic Results</h3>
         </div>
+        <div style={{ overflowX: 'auto' }}>
         <table className="data-table">
           <thead><tr><th>Course</th><th>Code</th><th>Credits</th><th>Score</th><th>Grade</th><th>GP</th><th>Semester</th></tr></thead>
           <tbody>
@@ -94,6 +95,7 @@ const StudentDetail = () => {
             })}
           </tbody>
         </table>
+        </div>
       </motion.div>
     </div>
   );
